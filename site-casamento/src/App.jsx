@@ -1,13 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, Heart, MapPin, Calendar, Clock, Camera, MessageCircle, Send, Check, Loader2 } from 'lucide-react';
 import emailjs from '@emailjs/browser';
+import { createClient } from '@supabase/supabase-js';
 
-// Botão Primário reutilizável
+const supabaseUrl = 'https://pmikucbwkaktlcyrzldb.supabase.co';
+const supabaseKey = 'sb_publishable_frQPpcPb7-uqwYwnUuayFQ_9FGJF_Nx';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
 const Button = ({ children, onClick, type = "button", className = "" }) => (
   <button
     type={type}
     onClick={onClick}
-    className={`bg-rose-900 text-white px-8 py-3 rounded-full font-serif uppercase tracking-widest text-sm hover:bg-rose-800 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 ${className}`}
+    className={`bg-rose-400 text-amber-600 px-8 py-3 rounded-full font-serif uppercase tracking-widest text-sm hover:bg-rose-800 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 ${className}`}
+    style={{
+        backgroundColor: '#881337', 
+        color: '#ffffff',         
+      }}
   >
     {children}
   </button>
@@ -17,7 +25,7 @@ const Button = ({ children, onClick, type = "button", className = "" }) => (
 const SectionTitle = ({ title, subtitle }) => (
   <div className="text-center mb-12 animate-fade-in-up">
     <h3 className="text-amber-600 font-serif italic text-xl mb-2">{subtitle}</h3>
-    <h2 className="text-4xl md:text-5xl font-display text-stone-800">{title}</h2>
+    <h2 className="text-4xl md:text-5xl font-display text-gray-800">{title}</h2>
     <div className="w-24 h-1 bg-amber-600 mx-auto mt-6 rounded-full opacity-60"></div>
   </div>
 );
@@ -39,7 +47,7 @@ const Hero = () => (
     {/* Conteúdo */}
     <div className="relative z-10 text-center text-white px-4 animate-fade-in">
       <p className="font-serif text-xl md:text-2xl tracking-widest mb-4">Vamos nos casar</p>
-      <h1 className="font-script text-7xl md:text-9xl mb-6 text-stone-50 drop-shadow-lg">
+      <h1 className="font-script text-7xl md:text-9xl mb-6 text-gray-50 drop-shadow-lg">
         Brunna & Kevin
       </h1>
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 font-serif text-lg md:text-xl tracking-wide">
@@ -48,7 +56,7 @@ const Hero = () => (
         <span className="flex items-center gap-2"><MapPin className="w-5 h-5" /> Pato Branco, PR</span>
       </div>
       <div className="mt-12">
-        <a href="#rsvp" className="inline-block bg-white/20 backdrop-blur-sm border border-white text-white px-10 py-4 rounded-full font-serif hover:bg-white hover:text-stone-900 transition-all duration-300 uppercase tracking-widest text-sm">
+        <a href="#rsvp" className="inline-block bg-white/60 backdrop-blur-sm border border-white text-white px-10 py-4 rounded-full font-serif hover:bg-white hover:text-gray-900 transition-all duration-300 uppercase tracking-widest text-sm">
           Confirmar Presença
         </a>
       </div>
@@ -71,23 +79,21 @@ const RSVP = () => {
     const TEMPLATE_ID = "template_kxu2ors";
     const PUBLIC_KEY = "iBJu07hIvL-Vq_IOo";
     console.log("Form data:", new FormData(form.current));
-    // emailjs
-    //   .sendForm(SERVICE_ID, TEMPLATE_ID, form.current, {
-    //     publicKey: PUBLIC_KEY,
-    //   })
-    //   .then(
-    //     () => {
-    //       setSubmitted(true);
-    //       setLoading(false);
-    //     },
-    //     (error) => {
-    //       console.error('FAILED...', error.text);
-    //       setError(true);
-    //       setLoading(false);
-    //     },
-    //   );
-    setSubmitted(true);
-    setLoading(false);
+    emailjs
+      .sendForm(SERVICE_ID, TEMPLATE_ID, form.current, {
+        publicKey: PUBLIC_KEY,
+      })
+      .then(
+        () => {
+          setSubmitted(true);
+          setLoading(false);
+        },
+        (error) => {
+          console.error('FAILED...', error.text);
+          setError(true);
+          setLoading(false);
+        },
+      );
   };
 
   return (
@@ -145,6 +151,10 @@ const RSVP = () => {
                     type="submit"
                     disabled={loading}
                     className="bg-rose-900 text-amber-600 font-serif italic px-8 py-3 rounded-full font-serif uppercase tracking-widest text-sm hover:bg-rose-800 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto min-w-[200px] flex items-center justify-center gap-2"
+                    style={{
+                    backgroundColor: '#881337', 
+                    color: '#ffffff',         
+                    }}
                   >
                     {loading ? (
                       <>
@@ -190,27 +200,72 @@ const Contact = () => (
 );
 
 const Guestbook = () => {
-  const [messages, setMessages] = useState([
-    { id: 1, name: "Tia Marta", text: "Que a felicidade de vocês seja infinita! Mal posso esperar pelo grande dia." },
-    { id: 2, name: "Lucas & Ana", text: "Vocês merecem todo o amor do mundo. Parabéns ao casal!" },
-    { id: 3, name: "Vovó Cida", text: "Deus abençoe essa união linda. Amo vocês." }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [newName, setNewName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
 
-  const handleAddMessage = (e) => {
+  // 1. Load messages when the page opens
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  const fetchMessages = async () => {
+    try {
+      // Select all messages, ordered by newest first
+      const { data, error } = await supabase
+        .from('guestbook')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setMessages(data || []);
+    } catch (error) {
+      console.error("Error loading messages:", error.message);
+    } finally {
+      setFetching(false);
+    }
+  };
+
+  // 2. Save a new message
+  const handleAddMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !newName.trim()) return;
     
-    setMessages([{ id: Date.now(), name: newName, text: newMessage }, ...messages]);
-    setNewMessage("");
-    setNewName("");
+    setLoading(true);
+
+    try {
+      const { error } = await supabase
+        .from('guestbook')
+        .insert([
+          { name: newName, message: newMessage }
+        ]);
+
+      if (error) throw error;
+
+      // Clear form and reload list
+      setNewMessage("");
+      setNewName("");
+      fetchMessages(); 
+      
+    } catch (error) {
+      alert("Erro ao salvar mensagem. Tente novamente!");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <section id="mensagens" className="py-20 bg-rose-50/30">
       <div className="container mx-auto px-4 max-w-4xl">
-        <SectionTitle title="Livro de Visitas" subtitle="Deixe seu carinho" />
+        {/* Reusing your SectionTitle component */}
+        <div className="text-center mb-12">
+          <h3 className="text-amber-600 font-serif italic text-xl mb-2">Deixe seu carinho</h3>
+          <h2 className="text-4xl md:text-5xl font-display text-stone-800">Livro de Visitas</h2>
+          <div className="w-24 h-1 bg-amber-600 mx-auto mt-6 rounded-full opacity-60"></div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Formulário */}
@@ -225,6 +280,7 @@ const Guestbook = () => {
                 className="w-full border border-stone-200 rounded-lg p-3 focus:outline-none focus:border-rose-400 focus:ring-1 focus:ring-rose-400"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
+                maxLength={50}
               />
               <textarea 
                 rows="4" 
@@ -232,22 +288,42 @@ const Guestbook = () => {
                 className="w-full border border-stone-200 rounded-lg p-3 focus:outline-none focus:border-rose-400 focus:ring-1 focus:ring-rose-400 resize-none"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
+                maxLength={280}
               ></textarea>
-              <Button type="submit" className="w-full">Publicar Mensagem</Button>
+              
+              <Button type="submit" className="w-full flex justify-center items-center gap-2" disabled={loading}>
+                {loading ? <Loader2 className="animate-spin w-4 h-4" /> : "Publicar Mensagem"}
+              </Button>
             </form>
           </div>
 
           {/* Lista de Mensagens */}
           <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-            {messages.map((msg) => (
-              <div key={msg.id} className="bg-white p-6 rounded-xl border border-stone-100 shadow-sm relative">
-                <div className="absolute top-4 right-4 text-rose-200 opacity-50">
-                  <MessageCircle size={30} />
-                </div>
-                <p className="text-stone-600 italic mb-4 font-serif text-lg">"{msg.text}"</p>
-                <p className="text-amber-700 font-bold text-sm tracking-wide uppercase">— {msg.name}</p>
+            {fetching ? (
+              <div className="text-center text-stone-400 py-10 flex flex-col items-center">
+                 <Loader2 className="animate-spin mb-2" />
+                 <p>Carregando mensagens...</p>
               </div>
-            ))}
+            ) : messages.length === 0 ? (
+               <div className="text-center text-stone-400 py-10 italic">
+                 Seja o primeiro a deixar uma mensagem!
+               </div>
+            ) : (
+              messages.map((msg) => (
+                <div key={msg.id} className="bg-white p-6 rounded-xl border border-stone-100 shadow-sm relative animate-fade-in-up">
+                  <div className="absolute top-4 right-4 text-rose-200 opacity-50">
+                    <MessageCircle size={30} />
+                  </div>
+                  <p className="text-stone-600 italic mb-4 font-serif text-lg">"{msg.message}"</p>
+                  <div className="flex justify-between items-end">
+                    <p className="text-amber-700 font-bold text-sm tracking-wide uppercase">— {msg.name}</p>
+                    <span className="text-xs text-stone-400">
+                      {new Date(msg.created_at).toLocaleDateString('pt-BR')}
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
