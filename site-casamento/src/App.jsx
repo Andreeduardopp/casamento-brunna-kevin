@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, Heart, MapPin, Calendar, Clock, Camera, MessageCircle, Send, Check } from 'lucide-react';
-
-// --- COMPONENTES AUXILIARES ---
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, Heart, MapPin, Calendar, Clock, Camera, MessageCircle, Send, Check, Loader2 } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 
 // Botão Primário reutilizável
 const Button = ({ children, onClick, type = "button", className = "" }) => (
@@ -26,11 +25,11 @@ const SectionTitle = ({ title, subtitle }) => (
 // --- SEÇÕES DO SITE ---
 
 const Hero = () => (
-  <section id="inicio" className="relative h-screen flex items-center justify-center overflow-hidden">
+  <section id="inicio" className="relative h-screen w-screen flex items-center justify-center overflow-hidden">
     {/* Imagem de Fundo com Overlay */}
     <div className="absolute inset-0 z-0">
       <img 
-        src="https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" 
+        src="assets/B&K_ (117).jpg" 
         alt="Casamento Romântico" 
         className="w-full h-full object-cover"
       />
@@ -59,11 +58,36 @@ const Hero = () => (
 
 const RSVP = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false); // New loading state
+  const [error, setError] = useState(false);
+  const form = useRef(); // Reference to the form
 
-  const handleSubmit = (e) => {
+  const sendEmail = (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(false);
+
+    const SERVICE_ID = "service_gammwb7";
+    const TEMPLATE_ID = "template_kxu2ors";
+    const PUBLIC_KEY = "iBJu07hIvL-Vq_IOo";
+    console.log("Form data:", new FormData(form.current));
+    // emailjs
+    //   .sendForm(SERVICE_ID, TEMPLATE_ID, form.current, {
+    //     publicKey: PUBLIC_KEY,
+    //   })
+    //   .then(
+    //     () => {
+    //       setSubmitted(true);
+    //       setLoading(false);
+    //     },
+    //     (error) => {
+    //       console.error('FAILED...', error.text);
+    //       setError(true);
+    //       setLoading(false);
+    //     },
+    //   );
     setSubmitted(true);
-    // Aqui entraria a lógica de envio para backend/API
+    setLoading(false);
   };
 
   return (
@@ -73,45 +97,64 @@ const RSVP = () => {
         
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-stone-100">
           {submitted ? (
-            <div className="text-center py-12">
+            <div className="text-center py-12 animate-fade-in">
               <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Check className="w-10 h-10" />
               </div>
               <h3 className="text-2xl font-serif text-stone-800 mb-2">Obrigado!</h3>
-              <p className="text-stone-600">Sua presença foi confirmada com sucesso. Mal podemos esperar para celebrar com você!</p>
+              <p className="text-stone-600">Sua presença foi confirmada com sucesso. Verifique seu e-mail!</p>
               <button onClick={() => setSubmitted(false)} className="mt-6 text-rose-900 underline underline-offset-4 hover:text-rose-700">Enviar outra confirmação</button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form ref={form} onSubmit={sendEmail} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-stone-600 text-sm font-bold mb-2 font-sans tracking-wide">NOME COMPLETO</label>
-                  <input required type="text" className="w-full bg-stone-50 border-b-2 border-stone-200 focus:border-rose-900 outline-none py-3 px-2 transition-colors" placeholder="Seu nome aqui" />
+                  <input name="user_name" required type="text" className="w-full bg-stone-50 border-b-2 border-stone-200 focus:border-rose-900 outline-none py-3 px-2 transition-colors" placeholder="Seu nome aqui" />
                 </div>
                 <div>
                   <label className="block text-stone-600 text-sm font-bold mb-2 font-sans tracking-wide">E-MAIL</label>
-                  <input required type="email" className="w-full bg-stone-50 border-b-2 border-stone-200 focus:border-rose-900 outline-none py-3 px-2 transition-colors" placeholder="seu@email.com" />
+                  <input name="user_email" required type="email" className="w-full bg-stone-50 border-b-2 border-stone-200 focus:border-rose-900 outline-none py-3 px-2 transition-colors" placeholder="seu@email.com" />
                 </div>
               </div>
 
               <div>
                 <label className="block text-stone-600 text-sm font-bold mb-2 font-sans tracking-wide">ACOMPANHANTES</label>
-                <select className="w-full bg-stone-50 border-b-2 border-stone-200 focus:border-rose-900 outline-none py-3 px-2 transition-colors">
-                  <option>Apenas eu</option>
-                  <option>Eu + 1 pessoa</option>
-                  <option>Eu + 2 pessoas</option>
-                  <option>Eu + 3 pessoas</option>
+                <select name="guests_count" className="w-full bg-stone-50 border-b-2 border-stone-200 focus:border-rose-900 outline-none py-3 px-2 transition-colors">
+                  <option value="Apenas eu">Apenas eu</option>
+                  <option value="Eu + 1 pessoa">Eu + 1 pessoa</option>
+                  <option value="Eu + 2 pessoas">Eu + 2 pessoas</option>
+                  <option value="Eu + 3 pessoas">Eu + 3 pessoas</option>
                 </select>
               </div>
 
               <div className="flex items-center gap-3 py-4">
-                <input type="checkbox" id="confirm" className="w-5 h-5 accent-rose-900" required />
+                <input name="attending" value="sim" type="checkbox" id="confirm" className="w-5 h-5 accent-rose-900" required />
                 <label htmlFor="confirm" className="text-stone-600">Confirmo que estarei presente neste dia especial.</label>
               </div>
 
-              <div className="text-center pt-4">
-                <Button type="submit" className="w-full md:w-auto min-w-[200px]">Enviar Confirmação</Button>
-              </div>
+              {error && (
+                <div className="text-red-600 text-center text-sm bg-red-50 p-2 rounded">
+                  Ocorreu um erro ao enviar. Por favor, tente novamente.
+                </div>
+              )}
+
+              {/* Replace the <Button> tag inside the form with this: */}
+                <div className="text-center pt-4">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="bg-rose-900 text-amber-600 font-serif italic px-8 py-3 rounded-full font-serif uppercase tracking-widest text-sm hover:bg-rose-800 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto min-w-[200px] flex items-center justify-center gap-2"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" /> Enviando...
+                      </>
+                    ) : (
+                      "Enviar Confirmação"
+                    )}
+                  </button>
+                </div>
             </form>
           )}
         </div>
