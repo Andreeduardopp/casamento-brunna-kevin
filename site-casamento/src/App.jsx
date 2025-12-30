@@ -4,8 +4,8 @@ import emailjs from '@emailjs/browser';
 import { createClient } from '@supabase/supabase-js';
 import heroBg from '/assets/B&K_ (117).jpg';
 
-const supabaseUrl = 'https://pmikucbwkaktlcyrzldb.supabase.co';
-const supabaseKey = 'sb_publishable_frQPpcPb7-uqwYwnUuayFQ_9FGJF_Nx';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const Button = ({ children, onClick, type = "button", className = "" }) => (
@@ -52,7 +52,7 @@ const Hero = () => (
         Brunna & Kevin
       </h1>
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 font-serif text-lg md:text-xl tracking-wide">
-        <span className="flex items-center gap-2"><Calendar className="w-5 h-5" /> 15 de Novembro de 2025</span>
+        <span className="flex items-center gap-2"><Calendar className="w-5 h-5" /> 07 de março de 2026</span>
         <span className="hidden md:block w-2 h-2 bg-white rounded-full"></span>
         <span className="flex items-center gap-2"><MapPin className="w-5 h-5" /> Pato Branco, PR</span>
       </div>
@@ -76,10 +76,9 @@ const RSVP = () => {
     setLoading(true);
     setError(false);
 
-    const SERVICE_ID = "service_gammwb7";
-    const TEMPLATE_ID = "template_kxu2ors";
-    const PUBLIC_KEY = "iBJu07hIvL-Vq_IOo";
-    console.log("Form data:", new FormData(form.current));
+    const SERVICE_ID = import.meta.env.VITE_SERVICE_ID;
+    const TEMPLATE_ID = import.meta.env.VITE_TEMPLATE_ID;
+    const PUBLIC_KEY = import.meta.env.VITE_PUBLIC_KEY;
     emailjs
       .sendForm(SERVICE_ID, TEMPLATE_ID, form.current, {
         publicKey: PUBLIC_KEY,
@@ -100,7 +99,7 @@ const RSVP = () => {
   return (
     <section id="rsvp" className="py-20 bg-stone-50">
       <div className="container mx-auto px-4 max-w-3xl">
-        <SectionTitle title="Lista de Presença" subtitle="Confirme sua presença" />
+        <SectionTitle title="Lista de Convidados" subtitle="Confirme sua presença" />
 
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-stone-100">
           {submitted ? (
@@ -776,7 +775,7 @@ export default function App() {
 
   const navLinks = [
     { name: "Bem-vindos", href: "#inicio" },
-    { name: "RSVP", href: "#rsvp" },
+    { name: "Presença", href: "#rsvp" },
     { name: "Mensagens", href: "#mensagens" },
     { name: "Álbum", href: "#album" },
     { name: "Quiz", href: "#game" },
