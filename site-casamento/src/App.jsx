@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, Heart, MapPin, Calendar, Clock, Camera, MessageCircle, Send, Check, Loader2, Plus , Trophy, PartyPopper, Star, Gift, Copy } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import { createClient } from '@supabase/supabase-js';
+import heroBg from '/assets/B&K_ (117).jpg';
 
 const supabaseUrl = 'https://pmikucbwkaktlcyrzldb.supabase.co';
 const supabaseKey = 'sb_publishable_frQPpcPb7-uqwYwnUuayFQ_9FGJF_Nx';
@@ -37,7 +38,7 @@ const Hero = () => (
     {/* Imagem de Fundo com Overlay */}
     <div className="absolute inset-0 z-0">
       <img 
-        src="assets/B&K_ (117).jpg" 
+        src={heroBg} 
         alt="Casamento Romântico" 
         className="w-full h-full object-cover"
       />
@@ -816,12 +817,21 @@ export default function App() {
           {/* Desktop Menu */}
           <nav className="hidden md:flex gap-8">
             {navLinks.map((link) => (
-              <a 
-                key={link.name} 
-                href={link.href} 
-                className={`text-sm uppercase tracking-widest font-bold hover:text-amber-600 transition-colors ${
-                  scrolled ? 'text-stone-600' : 'text-white/90 hover:text-white'
-                }`}
+              <a
+                key={link.name}
+                href={link.href}
+                style={{
+                  color:'#57534e',
+                  fontSize: '0.875rem',           
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',         
+                  fontWeight: '700',
+                  color: scrolled
+                    ? '#57534e'                   
+                    : 'rgba(255, 255, 255, 0.9)', 
+                  transition: 'color 300ms ease',
+                }}
+                className={scrolled ? 'hover:text-amber-600' : 'hover:text-white'}
               >
                 {link.name}
               </a>
@@ -833,14 +843,14 @@ export default function App() {
             {isMenuOpen ? (
               <X className="text-stone-800" />
             ) : (
-              <Menu className={scrolled ? 'text-stone-800' : 'text-white'} />
+              <Menu style={{ color: scrolled ? '#292524' : '#ffffff' }} className={scrolled ? 'text-stone-800' : 'text-white'} />
             )}
           </button>
         </div>
 
         {/* Mobile Menu Overlay */}
         <div 
-          className={`fixed inset-0 bg-white z-40 flex flex-col items-center justify-center gap-8 transition-transform duration-300 ease-in-out md:hidden ${
+          className={`fixed inset-0 bg-white z-40 h-screen flex flex-col items-center justify-center gap-8 transition-transform duration-300 ease-in-out md:hidden ${
             isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
