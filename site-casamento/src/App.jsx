@@ -148,7 +148,7 @@ const RSVP = () => {
                 </div>
               </div>
 
-              <div>
+              {/* <div>
                 <label className="block text-sm font-bold mb-2 font-sans tracking-wide" style={{ color: COLORS.text }}>ACOMPANHANTES</label>
                 <select name="guests_count" className="w-full bg-[#f7f7f7] border-b-2 border-gray-200 focus:border-[#8da182] outline-none py-3 px-2 transition-colors">
                   <option value="Apenas eu">Apenas eu</option>
@@ -156,7 +156,7 @@ const RSVP = () => {
                   <option value="Eu + 2 pessoas">Eu + 2 pessoas</option>
                   <option value="Eu + 3 pessoas">Eu + 3 pessoas</option>
                 </select>
-              </div>
+              </div> */}
 
               <div className="flex items-center gap-3 py-4">
                 <input name="attending" value="sim" type="checkbox" id="confirm" className="w-5 h-5 accent-[#8da182]" required />
