@@ -3,6 +3,8 @@ import { Menu, X, Heart, MapPin, Calendar, Clock, Camera, MessageCircle, Send, C
 import emailjs from '@emailjs/browser';
 import { createClient } from '@supabase/supabase-js';
 import heroBg from '/assets/B&K_ (117).jpg';
+import acmeWideFont from '/assets/fonts/AcmeGothicWide.otf';
+import brandonFont from '/assets/fonts/Brandon_Grotesque_regular.otf';
 
 // --- CONFIGURATION ---
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -37,7 +39,7 @@ const Button = ({ children, onClick, type = "button", className = "" }) => (
 const SectionTitle = ({ title, subtitle }) => (
   <div className="text-center mb-12 animate-fade-in-up">
     <h3 className="font-serif italic text-xl mb-2" style={{ color: COLORS.olive }}>{subtitle}</h3>
-    <h2 className="text-4xl md:text-5xl font-display" style={{ color: COLORS.text }}>{title}</h2>
+    <h2 className="text-4xl md:text-5xl font-logo" style={{ color: COLORS.text }}>{title}</h2>
     <div className="w-24 h-1 mx-auto mt-6 rounded-full opacity-60" style={{ backgroundColor: COLORS.olive }}></div>
   </div>
 );
@@ -57,7 +59,7 @@ const Hero = () => (
 
     <div className="relative z-10 text-center text-[#f7f7f7] px-4 animate-fade-in">
       <p className="font-serif text-xl md:text-2xl tracking-widest mb-4">Vamos nos casar</p>
-      <h1 className="font-script text-7xl md:text-9xl mb-6 drop-shadow-lg">
+      <h1 className="font-logo text-7xl md:text-9xl mb-6 drop-shadow-lg">
         Brunna & Kevin
       </h1>
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 font-serif text-lg md:text-xl tracking-wide">
@@ -274,7 +276,7 @@ const Guestbook = () => {
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-12">
           <h3 className="font-serif italic text-xl mb-2" style={{ color: COLORS.olive }}>Deixe seu carinho</h3>
-          <h2 className="text-4xl md:text-5xl font-display" style={{ color: COLORS.text }}>Livro de Visitas</h2>
+          <h2 className="text-4xl md:text-5xl font-logo" style={{ color: COLORS.text }}>Livro de Visitas</h2>
           <div className="w-24 h-1 mx-auto mt-6 rounded-full opacity-60" style={{ backgroundColor: COLORS.olive }}></div>
         </div>
 
@@ -702,7 +704,7 @@ const Location = () => (
 const Footer = () => (
   <footer className="text-gray-300 py-12 text-center" style={{ backgroundColor: COLORS.text }}>
     <div className="container mx-auto px-4">
-      <h2 className="font-script text-4xl mb-6" style={{ color: COLORS.sage }}>Brunna & Kevin</h2>
+      <h2 className="font-logo text-4xl mb-6" style={{ color: COLORS.sage }}>Brunna & Kevin</h2>
       <div className="flex justify-center gap-6 mb-8">
         {/* <a href="#" className="hover:text-white transition-colors"><Camera size={20} /></a>
         <a href="#" className="hover:text-white transition-colors"><MessageCircle size={20} /></a> */}
@@ -741,14 +743,29 @@ export default function App() {
   return (
     <div className="font-sans text-[#595849] bg-white selection:bg-[#cfd9c6] selection:text-[#595849] scroll-smooth">
       <style>{`
+        @font-face {
+            font-family: 'Acme Gothic Wide';
+            src: url('${acmeWideFont}') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+          }
+
+        @font-face {
+          font-family: 'Brandon Grotesque';
+          src: url('${brandonFont}') format('opentype');
+          font-weight: normal;
+          font-style: normal;
+        }
+
         @import url('https://fonts.googleapis.com/css2?family=Acme&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
         
         html { scroll-behavior: smooth; }
         .font-script { font-family: 'Great Vibes', cursive; }
+        .font-logo { font-family: 'Acme Gothic Wide', sans-serif; }
         .font-display { font-family: 'Playfair Display', serif; }
         
         /* Updated font-sans to use Acme */
-        .font-sans { font-family: 'Acme', sans-serif; }
+        .font-sans { font-family:  sans-serif; }
         
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f7f7f7; }
@@ -764,7 +781,7 @@ export default function App() {
         <div className="container mx-auto px-4 flex justify-between items-center">
           <a
             href="#inicio"
-            className="font-script text-3xl md:text-4xl transition-colors"
+            className="font-logo text-3xl md:text-4xl transition-colors"
             style={{
               color: scrolled ? '#8da182' : '#ffffff'
             }}
