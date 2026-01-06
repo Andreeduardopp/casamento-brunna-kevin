@@ -206,7 +206,7 @@ const Contact = () => (
       <SectionTitle title="Entre em Contato" subtitle="Dúvidas ou sugestões?" />
       
       <div className="flex flex-col md:flex-row justify-center gap-8 md:gap-16 mt-12">
-        <a href="#" className="group flex flex-col items-center p-6 rounded-xl hover:bg-[#f7f7f7] transition-colors cursor-pointer">
+        <a href="https://wa.me/554699174297" className="group flex flex-col items-center p-6 rounded-xl hover:bg-[#f7f7f7] transition-colors cursor-pointer">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform" style={{ backgroundColor: COLORS.sage, color: COLORS.text }}>
             <MessageCircle className="w-8 h-8" />
           </div>
@@ -662,7 +662,6 @@ const Location = () => (
              <div>
                <h3 className="font-serif text-2xl mb-2" style={{ color: COLORS.text }}>Horário</h3>
                <p className="text-gray-600">A recepção terá início pontualmente às 18:00.</p>
-               <p className="text-gray-600">Recepção a seguir no mesmo local.</p>
              </div>
            </div>
 
