@@ -6,10 +6,7 @@ import heroBg from '/assets/B&K_ (117).jpg';
 import acmeWideFont from '/assets/fonts/AcmeGothicWide.otf';
 import brandonFont from '/assets/fonts/Brandon_Grotesque_regular.otf';
 
-// --- CONFIGURATION ---
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+
 
 // --- PALETTE CONSTANTS ---
 const COLORS = {
@@ -227,6 +224,10 @@ const Contact = () => (
 );
 
 const Guestbook = () => {
+  // --- CONFIGURATION ---
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  const supabase = createClient(supabaseUrl, supabaseKey);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [newName, setNewName] = useState("");
@@ -376,7 +377,7 @@ const Gallery = () => {
                     src={src} 
                     alt={`Foto ${index + 1}`}
                     loading='lazy' 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-[#595849]/20 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                     <Heart className="text-white fill-white animate-bounce" size={32} />
