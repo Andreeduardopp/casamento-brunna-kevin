@@ -557,8 +557,7 @@ const GiftList = () => {
               <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
               <h3 className="font-serif text-xl font-bold mb-2" style={{ color: COLORS.text }}>{item.title}</h3>
               <p className="text-gray-500 text-sm mb-6 flex-grow">{item.desc}</p>
-              
-              <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-200">
+              <div className="flex items-center flex-col justify-between mt-auto pt-4 border-t border-gray-200">
                 <span className="font-bold text-lg" style={{ color: COLORS.olive }}>{item.price}</span>
                 <button 
                   onClick={() => setSelectedGift(item)} // ABRE O MODAL
