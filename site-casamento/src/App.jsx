@@ -26,7 +26,8 @@ const Button = ({ children, onClick, type = "button", className = "" }) => (
     className={`px-8 py-3 rounded-full font-serif uppercase tracking-widest text-sm transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 ${className}`}
     style={{
         backgroundColor: COLORS.olive,
-        color: '#ffffff',         
+        color: '#ffffff',  
+        border: 'none',       
       }}
   >
     {children}
@@ -65,7 +66,23 @@ const Hero = () => (
         <span className="flex items-center gap-2"><MapPin className="w-5 h-5" /> Pato Branco, PR</span>
       </div>
       <div className="mt-12">
-        <a href="#rsvp" className="inline-block bg-[#f7f7f7]/20 backdrop-blur-sm border border-[#f7f7f7] text-[#f7f7f7] px-10 py-4 rounded-full font-serif hover:bg-[#f7f7f7] hover:text-[#595849] transition-all duration-300 uppercase tracking-widest text-sm">
+        <a 
+          href="#rsvp" 
+          className="inline-block backdrop-blur-sm border px-10 py-4 rounded-full font-serif transition-all duration-300 uppercase tracking-widest text-sm"
+          style={{
+            color: '#f7f7f7',
+            borderColor: '#f7f7f7',
+            backgroundColor: 'rgba(247, 247, 247, 0.2)' // Default state
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#f7f7f7';
+            e.currentTarget.style.color = '#595849'; // Dark Earth on hover
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(247, 247, 247, 0.2)';
+            e.currentTarget.style.color = '#f7f7f7'; // Back to Light Grey
+          }}
+        >
           Confirmar Presença
         </a>
       </div>
@@ -160,7 +177,8 @@ const RSVP = () => {
                   className="px-8 py-3 rounded-full font-serif uppercase tracking-widest text-sm hover:shadow-xl hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto min-w-[200px] flex items-center justify-center gap-2 transition-all duration-300 shadow-lg"
                   style={{
                     backgroundColor: COLORS.olive, 
-                    color: '#ffffff',         
+                    color: '#ffffff',      
+                    border: 'none',    
                   }}
                 >
                   {loading ? (
@@ -371,7 +389,8 @@ const Gallery = () => {
                   onClick={handleLoadMore}
                   className="group flex items-center gap-2 mx-auto bg-white border border-[#cfd9c6] text-[#595849] px-8 py-3 rounded-full font-serif text-sm uppercase tracking-widest hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg"
                   style={{
-                    ':hover': { backgroundColor: COLORS.olive, borderColor: COLORS.olive }
+                    ':hover': { backgroundColor: COLORS.olive, borderColor: COLORS.olive },
+                      border: 'none', 
                   }}
                   onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = COLORS.olive; e.currentTarget.style.color = 'white'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = COLORS.text; }}
@@ -393,7 +412,7 @@ const Gallery = () => {
 };
 
 const GiftList = () => {
-  const PIX_KEY = "000.000.000-00"; 
+  const PIX_KEY = "casamentobrunnakevin@gmail.com"; 
   const copyPix = () => {
     navigator.clipboard.writeText(PIX_KEY);
     alert("Chave PIX copiada! Obrigado por contribuir com nossa sanidade mental (e financeira) ✨");
@@ -535,7 +554,7 @@ const GiftList = () => {
         <div className="rounded-2xl p-8 md:p-12 text-center max-w-3xl mx-auto border-2 border-dashed" style={{ backgroundColor: '#cfd9c633', borderColor: COLORS.sage }}>
           <h3 className="font-serif text-2xl mb-4" style={{ color: COLORS.text }}>Prefere fazer um PIX direto?</h3>
           <p className="text-gray-600 mb-8">
-            Nossa chave PIX é nosso e-mail/CPF/Telefone. Todo valor será usado para construirmos nosso futuro.
+            Nossa chave PIX é nosso e-mail. Todo valor será usado para construirmos nosso futuro.
           </p>
           
           <div className="flex flex-col md:flex-row items-center justify-center gap-4">
@@ -565,7 +584,7 @@ const Location = () => (
              </div>
              <div>
                <h3 className="font-serif text-2xl mb-2" style={{ color: COLORS.text }}>Horário</h3>
-               <p className="text-gray-600">A recepção terá início pontualmente às <strong style={{ color: COLORS.olive }}>18:00</strong>.</p>
+               <p className="text-gray-600">A recepção terá início pontualmente às 18:00.</p>
                <p className="text-gray-600">Recepção a seguir no mesmo local.</p>
              </div>
            </div>
@@ -609,8 +628,8 @@ const Footer = () => (
     <div className="container mx-auto px-4">
       <h2 className="font-script text-4xl mb-6" style={{ color: COLORS.sage }}>Brunna & Kevin</h2>
       <div className="flex justify-center gap-6 mb-8">
-        <a href="#" className="hover:text-white transition-colors"><Camera size={20} /></a>
-        <a href="#" className="hover:text-white transition-colors"><MessageCircle size={20} /></a>
+        {/* <a href="#" className="hover:text-white transition-colors"><Camera size={20} /></a>
+        <a href="#" className="hover:text-white transition-colors"><MessageCircle size={20} /></a> */}
       </div>
       <p className="font-serif text-sm tracking-widest opacity-60">
         © 2026 FEITO COM AMOR. TODOS OS DIREITOS RESERVADOS.
@@ -667,10 +686,15 @@ export default function App() {
         }`}
       >
         <div className="container mx-auto px-4 flex justify-between items-center">
-          <a href="#inicio" className={`font-script text-3xl md:text-4xl transition-colors ${scrolled ? 'text-[#595849]' : 'text-white'}`}>
+          <a
+            href="#inicio"
+            className="font-script text-3xl md:text-4xl transition-colors"
+            style={{
+              color: scrolled ? '#8da182' : '#ffffff'
+            }}
+          >
             B & K
           </a>
-
           <nav className="hidden md:flex gap-8">
             {navLinks.map((link) => (
               <a
@@ -681,7 +705,7 @@ export default function App() {
                   textTransform: 'uppercase',
                   letterSpacing: '0.1em',         
                   fontWeight: '700',
-                  color: scrolled ? COLORS.text : 'rgba(255, 255, 255, 0.9)', 
+                  color: scrolled ? '#8da182' : 'rgba(255, 255, 255, 0.9)', 
                   transition: 'color 300ms ease',
                 }}
                 className={scrolled ? 'hover:text-[#8da182]' : 'hover:text-white'}
