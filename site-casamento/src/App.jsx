@@ -410,9 +410,29 @@ const Gallery = () => {
     </section>
   );
 };
-
 const GiftList = () => {
-  const PIX_KEY = "casamentobrunnakevin@gmail.com"; 
+  const PIX_KEY = "0a7d7c3f-417e-4912-94ae-77cf9b4c9611"; 
+  
+  // 1. ESTADO PARA O MODAL
+  const [selectedGift, setSelectedGift] = useState(null);
+
+  // 2. IMPORTAR TODAS AS IMAGENS DA PASTA QR_CODE
+  const qrCodeImages = import.meta.glob('/assets/qr_code/*.png', { 
+    eager: true, 
+    import: 'default' 
+  });
+
+  // Função para limpar o preço e transformar em nome de arquivo (ex: "R$ 50,00" -> "50")
+  const getQrImageSrc = (price) => {
+    // Remove "R$ ", remove pontos de milhar, remove ",00" e espaços
+    const cleanValue = price.replace('R$', '').replace(',00', '').replace('.', '').trim();
+    
+    // Procura no objeto de imagens importadas a chave que termina com "/50.png"
+    const imagePath = Object.keys(qrCodeImages).find(path => path.endsWith(`/${cleanValue}.png`));
+    
+    return imagePath ? qrCodeImages[imagePath] : null;
+  };
+
   const copyPix = () => {
     navigator.clipboard.writeText(PIX_KEY);
     alert("Chave PIX copiada! Obrigado por contribuir com nossa sanidade mental (e financeira) ✨");
@@ -516,7 +536,7 @@ const GiftList = () => {
 
   return (
     <section id="presentes" className="py-20 bg-white">
-      <div className="container mx-auto px-4 max-w-5xl">
+      <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-16">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce" style={{ backgroundColor: COLORS.sage, color: COLORS.text }}>
             <Gift size={32} />
@@ -528,7 +548,8 @@ const GiftList = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+        {/* Grid de Presentes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-16">
           {gifts.map((item, index) => (
             <div key={index} className="border border-[#cfd9c6] rounded-xl p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col" style={{ backgroundColor: COLORS.bg }}>
               <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
@@ -538,11 +559,20 @@ const GiftList = () => {
               <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-200">
                 <span className="font-bold text-lg" style={{ color: COLORS.olive }}>{item.price}</span>
                 <button 
-                  onClick={copyPix}
-                  className="bg-white border text-sm font-bold hover:text-white transition-colors flex items-center gap-2 px-4 py-2 rounded-lg"
+                  onClick={() => setSelectedGift(item)} // ABRE O MODAL
+                  // Adicionado focus:outline-none e lógica de hover corrigida
+                  className="bg-white border text-sm font-bold hover:text-white transition-colors flex items-center gap-2 px-3 py-2 rounded-lg focus:outline-none"
                   style={{ borderColor: COLORS.olive, color: COLORS.olive }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = COLORS.olive; e.currentTarget.style.color = 'white'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = COLORS.olive; }}
+                  onMouseEnter={(e) => { 
+                    e.currentTarget.style.backgroundColor = COLORS.olive; 
+                    e.currentTarget.style.color = 'white'; 
+                    e.currentTarget.style.borderColor = COLORS.olive;
+                  }}
+                  onMouseLeave={(e) => { 
+                    e.currentTarget.style.backgroundColor = 'white'; 
+                    e.currentTarget.style.color = COLORS.olive;
+                    e.currentTarget.style.borderColor = COLORS.olive;
+                  }}
                 >
                   Presentear <Gift size={16} />
                 </button>
@@ -551,6 +581,7 @@ const GiftList = () => {
           ))}
         </div>
 
+        {/* Área do PIX Central (Rodapé da seção) */}
         <div className="rounded-2xl p-8 md:p-12 text-center max-w-3xl mx-auto border-2 border-dashed" style={{ backgroundColor: '#cfd9c633', borderColor: COLORS.sage }}>
           <h3 className="font-serif text-2xl mb-4" style={{ color: COLORS.text }}>Prefere fazer um PIX direto?</h3>
           <p className="text-gray-600 mb-8">
@@ -567,6 +598,51 @@ const GiftList = () => {
           </div>
         </div>
       </div>
+
+      {/* --- MODAL DO QR CODE --- */}
+      {selectedGift && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setSelectedGift(null)}></div>
+          
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm relative z-10 overflow-hidden animate-fade-in-up p-8 text-center border-4" style={{ borderColor: COLORS.sage }}>
+            <button 
+              onClick={() => setSelectedGift(null)} 
+              className="absolute top-4 right-4 text-gray-400 hover:text-red-500 focus:outline-none"
+            >
+              <X size={24} />
+            </button>
+
+            <div className="mb-6">
+              <span className="text-5xl">{selectedGift.icon}</span>
+              <h3 className="font-serif text-2xl mt-4 font-bold" style={{ color: COLORS.text }}>{selectedGift.title}</h3>
+              <p className="text-lg font-bold mt-2" style={{ color: COLORS.olive }}>{selectedGift.price}</p>
+            </div>
+
+            <div className="bg-[#f7f7f7] p-4 rounded-xl mb-6 inline-block border border-[#cfd9c6]">
+              {getQrImageSrc(selectedGift.price) ? (
+                <img 
+                  src={getQrImageSrc(selectedGift.price)} 
+                  alt={`QR Code ${selectedGift.price}`} 
+                  className="w-48 h-48 object-contain mix-blend-multiply"
+                />
+              ) : (
+                <div className="w-48 h-48 flex items-center justify-center text-gray-400 text-sm">
+                  QR Code não encontrado para {selectedGift.price}
+                </div>
+              )}
+            </div>
+
+            <p className="text-sm text-gray-500 mb-6 px-4">
+              Escaneie o QR Code acima com o app do seu banco ou copie a chave PIX abaixo.
+            </p>
+
+            <Button onClick={copyPix} className="w-full flex justify-center items-center gap-2">
+              <Copy size={18} /> Copiar Chave PIX
+            </Button>
+          </div>
+        </div>
+      )}
+
     </section>
   );
 };
